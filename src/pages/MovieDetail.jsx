@@ -4,7 +4,7 @@ import axios from 'axios';
 import { API_BASE } from '../utils/api';
 import Spinner from '../components/Spinner';
 import MovieCard from '../components/MovieCard';
-import { Play, Download, ArrowLeft, Star, Calendar, Tag, Zap, Shield } from 'lucide-react';
+import { Play, Download, ArrowLeft, Star, Calendar, Tag, Zap, Shield, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const MovieDetail = () => {
@@ -12,6 +12,7 @@ const MovieDetail = () => {
     const [movie, setMovie] = useState(null);
     const [loading, setLoading] = useState(true);
     const [related, setRelated] = useState([]);
+    const [showTrailer, setShowTrailer] = useState(false);
 
     useEffect(() => {
         const fetch = async () => {
@@ -214,28 +215,29 @@ const MovieDetail = () => {
                         </div>
                     )}
 
-                    {/* ── Trailer Button ───────────────────────── */}
-                    <a
-                        href={movie.movieLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                            display: 'inline-flex', alignItems: 'center', gap: 10,
-                            padding: '13px 28px', borderRadius: 50,
-                            background: 'rgba(255,255,255,0.06)',
-                            border: '1.5px solid rgba(255,255,255,0.15)',
-                            color: '#fff', textDecoration: 'none',
-                            fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '0.95rem',
-                            backdropFilter: 'blur(12px)',
-                            alignSelf: 'flex-start',
-                            transition: 'all 0.25s',
-                        }}
-                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.borderColor = 'rgba(168,85,247,0.5)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; }}
-                    >
-                        <Play style={{ width: 18, height: 18, fill: 'currentColor' }} />
-                        ▶ Watch Trailer
-                    </a>
+                    {/* ── Watch Trailer Button ──────────────────── */}
+                    {(movie.trailerLink || movie.movieLink) && (
+                        <button
+                            onClick={() => setShowTrailer(true)}
+                            style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 10,
+                                padding: '13px 28px', borderRadius: 50,
+                                background: 'rgba(255,255,255,0.06)',
+                                border: '1.5px solid rgba(255,255,255,0.15)',
+                                color: '#fff',
+                                fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '0.95rem',
+                                backdropFilter: 'blur(12px)',
+                                alignSelf: 'flex-start',
+                                transition: 'all 0.25s',
+                                cursor: 'pointer',
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.borderColor = 'rgba(168,85,247,0.5)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; }}
+                        >
+                            <Play style={{ width: 18, height: 18, fill: 'currentColor' }} />
+                            ▶ Watch Trailer
+                        </button>
+                    )}
 
                     {/* ── Download Buttons ─────────────────────── */}
                     <div>
@@ -248,39 +250,43 @@ const MovieDetail = () => {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
                             {/* Button 1: Download Movie — purple/blue */}
-                            <div>
-                                <a
-                                    href={movie.movieLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="btn-download-primary btn-ripple"
-                                    style={{ width: '100%', justifyContent: 'center', padding: '16px 24px', fontSize: '1.05rem' }}
-                                >
-                                    <Download style={{ width: 20, height: 20 }} />
-                                    Download Movie
-                                </a>
-                            </div>
+                            {(movie.downloadLink || movie.movieLink) && (
+                                <div>
+                                    <a
+                                        href={movie.downloadLink || movie.movieLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="btn-download-primary btn-ripple"
+                                        style={{ width: '100%', justifyContent: 'center', padding: '16px 24px', fontSize: '1.05rem' }}
+                                    >
+                                        <Download style={{ width: 20, height: 20 }} />
+                                        Download Movie
+                                    </a>
+                                </div>
+                            )}
 
                             {/* Button 2: Fast Server — pink/orange */}
-                            <div>
-                                <a
-                                    href={movie.movieLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="btn-download-fast btn-ripple"
-                                    style={{ width: '100%', justifyContent: 'center', padding: '16px 24px', fontSize: '1.05rem' }}
-                                >
-                                    <Zap style={{ width: 20, height: 20 }} />
-                                    Download (Fast Server)
-                                </a>
-                                <p style={{
-                                    textAlign: 'center', marginTop: 8,
-                                    color: 'rgba(255,255,255,0.35)', fontSize: '0.75rem',
-                                    fontStyle: 'italic', fontFamily: "'Inter', sans-serif",
-                                }}>
-                                    Support us by using this link
-                                </p>
-                            </div>
+                            {movie.fastDownloadLink && (
+                                <div>
+                                    <a
+                                        href={movie.fastDownloadLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="btn-download-fast btn-ripple"
+                                        style={{ width: '100%', justifyContent: 'center', padding: '16px 24px', fontSize: '1.05rem' }}
+                                    >
+                                        <Zap style={{ width: 20, height: 20 }} />
+                                        Download (Fast Server)
+                                    </a>
+                                    <p style={{
+                                        textAlign: 'center', marginTop: 8,
+                                        color: 'rgba(255,255,255,0.35)', fontSize: '0.75rem',
+                                        fontStyle: 'italic', fontFamily: "'Inter', sans-serif",
+                                    }}>
+                                        Support us by using this link
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -343,6 +349,66 @@ const MovieDetail = () => {
                     </div>
                 </motion.div>
             )}
+
+            {/* ── Trailer Modal ──────────────────────────── */}
+            {showTrailer && (() => {
+                const src = movie.trailerLink || movie.movieLink || '';
+                // Convert YouTube watch URL to embed URL
+                let embedSrc = src;
+                const ytMatch = src.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+                if (ytMatch) embedSrc = `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`;
+                const isVideo = /\.(mp4|webm|ogg)(\?.*)?$/i.test(src);
+                return (
+                    <div
+                        onClick={() => setShowTrailer(false)}
+                        style={{
+                            position: 'fixed', inset: 0, zIndex: 9999,
+                            background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            padding: 20,
+                        }}
+                    >
+                        <div
+                            onClick={e => e.stopPropagation()}
+                            style={{
+                                position: 'relative', width: '100%', maxWidth: 900,
+                                aspectRatio: '16/9', borderRadius: 16, overflow: 'hidden',
+                                background: '#000',
+                                boxShadow: '0 0 60px rgba(168,85,247,0.3)',
+                            }}
+                        >
+                            <button
+                                onClick={() => setShowTrailer(false)}
+                                style={{
+                                    position: 'absolute', top: 12, right: 12, zIndex: 10,
+                                    width: 36, height: 36, borderRadius: '50%',
+                                    background: 'rgba(0,0,0,0.6)', border: '1.5px solid rgba(255,255,255,0.2)',
+                                    color: '#fff', cursor: 'pointer',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                }}
+                            >
+                                <X style={{ width: 18, height: 18 }} />
+                            </button>
+                            {isVideo ? (
+                                <video
+                                    src={src}
+                                    controls
+                                    autoPlay
+                                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                />
+                            ) : (
+                                <iframe
+                                    src={embedSrc}
+                                    title="Trailer"
+                                    allow="autoplay; encrypted-media; fullscreen"
+                                    allowFullScreen
+                                    style={{ width: '100%', height: '100%', border: 'none' }}
+                                />
+                            )}
+                        </div>
+                    </div>
+                );
+            })()}
         </div>
     );
 };

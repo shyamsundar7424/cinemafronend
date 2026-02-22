@@ -6,7 +6,8 @@ import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Plus, Edit, Trash2, Upload, X, LogOut, Film, Shield,
-    BarChart2, Clock, Tag, Link as LinkIcon, Image, CheckCircle, AlertCircle
+    BarChart2, Clock, Tag, Link as LinkIcon, Image, CheckCircle, AlertCircle,
+    Play, Zap
 } from 'lucide-react';
 
 const CATEGORIES = ['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi', 'Documentary', 'Anime'];
@@ -57,7 +58,7 @@ const CatBar = ({ cat, count, total }) => {
 /* ── Main Component ───────────────────────────── */
 const AdminDashboard = () => {
     const [movies, setMovies] = useState([]);
-    const [formData, setFormData] = useState({ title: '', category: 'Action', description: '', movieLink: '', year: '', rating: '' });
+    const [formData, setFormData] = useState({ title: '', category: 'Action', description: '', trailerLink: '', downloadLink: '', fastDownloadLink: '', year: '', rating: '' });
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [editingId, setEditingId] = useState(null);
@@ -134,7 +135,7 @@ const AdminDashboard = () => {
     };
 
     const resetForm = () => {
-        setFormData({ title: '', category: 'Action', description: '', movieLink: '', year: '', rating: '' });
+        setFormData({ title: '', category: 'Action', description: '', trailerLink: '', downloadLink: '', fastDownloadLink: '', year: '', rating: '' });
         setImageFile(null); setImagePreview(null); setEditingId(null);
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
@@ -142,7 +143,10 @@ const AdminDashboard = () => {
     const handleEdit = (movie) => {
         setFormData({
             title: movie.title, category: movie.category,
-            description: movie.description, movieLink: movie.movieLink,
+            description: movie.description,
+            trailerLink: movie.trailerLink || '',
+            downloadLink: movie.downloadLink || movie.movieLink || '',
+            fastDownloadLink: movie.fastDownloadLink || '',
             year: movie.year || '', rating: movie.rating || '',
         });
         setEditingId(movie._id);
@@ -419,14 +423,34 @@ const AdminDashboard = () => {
                                         </div>
                                     </div>
 
-                                    {/* Download/Stream Link */}
+                                    {/* Trailer Link */}
+                                    <div>
+                                        <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                            <Play style={{ width: 13, height: 13, color: '#00d4ff' }} />
+                                            Watch Trailer Link
+                                        </label>
+                                        <input name="trailerLink" value={formData.trailerLink} onChange={handleChange}
+                                            placeholder="YouTube embed URL or MP4 link" className="input-field" />
+                                    </div>
+
+                                    {/* Download Link */}
                                     <div>
                                         <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                             <LinkIcon style={{ width: 13, height: 13, color: '#a855f7' }} />
-                                            Download / Stream Link *
+                                            Download Movie Link *
                                         </label>
-                                        <input name="movieLink" value={formData.movieLink} onChange={handleChange}
-                                            placeholder="https://example.com/movie-link" className="input-field" required />
+                                        <input name="downloadLink" value={formData.downloadLink} onChange={handleChange}
+                                            placeholder="https://example.com/download" className="input-field" required />
+                                    </div>
+
+                                    {/* Fast Download Link */}
+                                    <div>
+                                        <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                            <Zap style={{ width: 13, height: 13, color: '#ffd700' }} />
+                                            Download (Fast Server) Link
+                                        </label>
+                                        <input name="fastDownloadLink" value={formData.fastDownloadLink} onChange={handleChange}
+                                            placeholder="https://fast-server.com/download" className="input-field" />
                                     </div>
 
                                     {/* Description */}

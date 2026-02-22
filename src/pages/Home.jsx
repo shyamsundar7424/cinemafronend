@@ -5,6 +5,7 @@ import { API_BASE } from '../utils/api';
 import MovieCard from '../components/MovieCard';
 import Spinner from '../components/Spinner';
 import AdBanner from '../components/AdBanner';
+import ExternalAd from '../components/ExternalAd';
 import { Search, Play, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -193,8 +194,8 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* ── Ad Banner 2 — between categories and movie grid ── */}
-            <AdBanner />
+            {/* ── External Ad — between categories and movie grid ── */}
+            <ExternalAd />
 
             {/* ── Movie Grid ───────────────────────────────── */}
             <div>
